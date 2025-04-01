@@ -34,10 +34,23 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
-}))
+const allowedOrigins = [
+  "http://localhost:5173",  // Local development
+  "https://fullstack-todolist-nazk.onrender.com"  // Deployed frontend
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 //routes
 app.use('/api/v1/user',userRouter);
